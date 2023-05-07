@@ -1,0 +1,40 @@
+<!-- extend base -->
+{% extends "base.html" %}
+<!-- set title -->
+{% block title %}YouWhisper - Convert YouTube Videos to Text by Whisper {% endblock %}
+<!-- set content -->
+{% block content %}
+<p></p>
+<h1></h1>
+    <h1>Convert Youtube videos to text using openai/whisper </h1>
+    {% if errors %}
+            <div class="alert alert-danger" role="alert">
+                <ul class="list-group">
+                    {% for error in errors %}
+                        <li class="list-group-item">{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        <p></p>
+        <form method="POST" action="." enctype="multipart/form-data">
+           
+            <div>
+                <input type="file" class="form-control" id="video" name="video" accept=".mp4" placeholder="Upload a file .mp4">
+            </div>
+
+            
+            <!-- we will add dropdown to select models: tiny, base, small, medium and we will pass this to the form. Name should be model. -->
+            <div class="form-group">
+                <select class="form-control" name="model">
+                    <!-- add please select text-->
+                    <option value="">Please select model size</option>
+                    <option value="tiny">Tiny - 39M Parameters</option>
+                    <option value="base">Base - 74M Parameters</option>
+                    <option value="small">Small - 244M Parameters</option>
+                    <option value="medium">Medium - 769M Parameters</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Convert</button>
+        </form>
+{% endblock %} 
