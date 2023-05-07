@@ -2,19 +2,18 @@ import pytube
 from moviepy.editor import VideoFileClip
 import pywhisper
 import os
-
 import static_ffmpeg
-
-def download_video(url):
-    video = pytube.YouTube(url)
-    stream = video.streams.get_by_itag(18)
-    stream.download()
-    return stream.default_filename
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
 def convert_to_mp3(filename):
+    print("iniciando processo de recebimento de video!")
     clip = VideoFileClip(filename)
-    clip.audio.write_audiofile(filename[:-4] + ".mp3")
+    print(" processamento de video finalizado!")
+    audio = clip.audio.write_audiofile(filename.replace(".mp4",".mp3"))
+    print('processo do audio concluido!')
     clip.close()
+    return audio
 
 def AudiotoText(filename):
     model = pywhisper.load_model("base")
@@ -23,36 +22,40 @@ def AudiotoText(filename):
     sonuc = result["text"]
     return sonuc
 
-def main(link, model):
+def main(video, model):
     print('''
-    This tool will convert Youtube videos to mp3 files and then transcribe them to text using Whisper.
+    This tool will convert .mp4 videos to mp3 files and then transcribe them to text using Whisper.
     ''')
-    print("URL: " + link)
+    print("Começando app... " )
     print("MODEL: " + model)
     # FFMPEG installed on first use.
     print("Initializing FFMPEG...")
     static_ffmpeg.add_paths()
 
-    print("Downloading video... Please wait.")
+    audio = None
+    print("loading video... Please wait.")
     try:
-        filename = download_video(link)
-        print("Downloaded video as " + filename)
+        print("video was loaded as: sucess! ")
     except:
-        print("Not a valid link..")
+        print("Not a valid file..")
         return
     try:
-        convert_to_mp3(filename)
-        print("Converted video to mp3")
+        
+        audio = video.audio
+        if audio is not None:
+            audio.write_audiofile('audiofile.mp3')
+            print(f"a conversao do arquivo foi um sucesso")
     except:
         print("Error converting video to mp3")
         return
     try:
         mymodel = pywhisper.load_model(model)
-        result = mymodel.transcribe(filename[:-4] + ".mp3")
+        result = mymodel.transcribe('audiofile.mp3')
         print(result["text"])
         result = result["text"]
-        os.remove(filename)
-        os.remove(filename[:-4] + ".mp3")
+        video.close()
+        os.remove('temp_video.mp4')
+        os.remove('audiofile.mp3')
         print("Removed video and audio files")
         print("Done!")
         return result

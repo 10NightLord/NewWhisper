@@ -1,5 +1,5 @@
 from flask import Flask, request, render_template
-
+from moviepy.editor import VideoFileClip
 from main import main
 
 app = Flask(__name__)
@@ -9,18 +9,22 @@ app.config["DEBUG"] = True
 def home():
     errors = ""
     if request.method == "POST":
-        link = None
+        video = None
+
         try:
-            link = request.form["link"]
+            file = request.files["video"]
+            file.save('temp_video.mp4')
+            video = VideoFileClip('temp_video.mp4')
+             
             # we need to validate if model is empty or not if empty then we need to set it to base
             model = request.form["model"]
             if model == "":
                 model = "base"
         except:
-            errors += "<p>{!r} is not a valid link.</p>\n".format(request.form["link"])
-        if link is not None:
-            result = main(link,model)
-            print(result)
+            errors += "<p>{!r} is not a valid file.</p>\n".format(request.files["video"])
+        if video is not None:
+            result = main(video,model)
+
             return render_template("result.html", result=result)
     return render_template("home.html", errors=errors)
 
