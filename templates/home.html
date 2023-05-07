@@ -17,10 +17,13 @@
             </div>
         {% endif %}
         <p></p>
-        <form method="post" action=".">
-            <div class="form-group">
-                <input type="text" class="form-control" name="link" placeholder="Enter Youtube URL">
+        <form method="POST" action="." enctype="multipart/form-data">
+           
+            <div>
+                <input type="file" class="form-control" id="video" name="video" accept=".mp4" placeholder="Upload a file .mp4">
             </div>
+
+            
             <!-- we will add dropdown to select models: tiny, base, small, medium and we will pass this to the form. Name should be model. -->
             <div class="form-group">
                 <select class="form-control" name="model">
